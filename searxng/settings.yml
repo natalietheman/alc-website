@@ -1,0 +1,62 @@
+use_default_settings: true
+
+search:
+  safe_search: 0
+  autocomplete: ''
+  default_lang: 'auto'
+  formats:
+    - html
+    - json
+
+engines:
+  - name: google
+    engine: google
+    shortcut: go
+    # Add trusted medical and academic institutions
+    search_url: https://www.google.com/search?q=site%3A(cdc.gov+OR+nih.gov+OR+stanford.edu+OR+health.harvard.edu+OR+mayoclinic.org+OR+who.int+OR+medlineplus.gov+OR+hopkinsmedicine.org+OR+clevelandclinic.org+OR+ucsfhealth.org+OR+jamanetwork.com+OR+nejm.org)+{query}
+    disabled: false
+
+  # Keep PubMed as it's a valuable medical research database
+  - name: pubmed
+    engine: pubmed
+    shortcut: pub
+    disabled: false
+
+  # Keep Google Scholar for academic papers
+  - name: google scholar
+    engine: google_scholar
+    shortcut: gos
+    disabled: false
+
+  # Disable other search engines
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: true
+
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: true
+  
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: true
+
+
+# Keep other necessary settings from your original config
+general:
+  debug: false
+  instance_name: 'searxng'
+  privacypolicy_url: false
+  donation_url: false
+  contact_url: false
+  enable_metrics: true
+
+server:
+  port: 8888
+  bind_address: '127.0.0.1'
+  secret_key: 'your_secret_key_here'
+  base_url: /
+
