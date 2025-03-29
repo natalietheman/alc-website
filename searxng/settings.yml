@@ -12,8 +12,23 @@ engines:
   - name: google
     engine: google
     shortcut: go
-    # Add trusted medical and academic institutions
-    search_url: https://www.google.com/search?q=site%3A(cdc.gov+OR+nih.gov+OR+stanford.edu+OR+health.harvard.edu+OR+mayoclinic.org+OR+who.int+OR+medlineplus.gov+OR+hopkinsmedicine.org+OR+clevelandclinic.org+OR+ucsfhealth.org+OR+jamanetwork.com+OR+nejm.org)+{query}
+    use_mobile_ui: true 
+    # Remove site filtering from settings since we're adding it in the query
+    # search_url: https://www.google.com/search?q={query}
+    disabled: false
+
+  # add qwant engine
+  - name: qwant
+    engine: qwant
+    shortcut: qw
+    disabled: false
+
+  # Configure DuckDuckGo with site filtering
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    # Remove site filtering from settings
+    # search_url: https://duckduckgo.com/?q={query}
     disabled: false
 
   # Keep PubMed as it's a valuable medical research database
@@ -28,12 +43,7 @@ engines:
     shortcut: gos
     disabled: false
 
-  # Disable other search engines
-  - name: duckduckgo
-    engine: duckduckgo
-    shortcut: ddg
-    disabled: true
-
+  # Other engines
   - name: bing
     engine: bing
     shortcut: bi
@@ -44,10 +54,9 @@ engines:
     shortcut: wp
     disabled: true
 
-
 # Keep other necessary settings from your original config
 general:
-  debug: false
+  debug: true
   instance_name: 'searxng'
   privacypolicy_url: false
   donation_url: false
@@ -56,7 +65,8 @@ general:
 
 server:
   port: 8888
+  limiter: false
+  public_instance: false
   bind_address: '127.0.0.1'
   secret_key: 'your_secret_key_here'
   base_url: /
-

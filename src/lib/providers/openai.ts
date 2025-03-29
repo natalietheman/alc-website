@@ -29,7 +29,6 @@ export const loadOpenAIChatModels = async () => {
         temperature: 0.7,
       }),
     };
-
     return chatModels;
   } catch (err) {
     logger.error(`Error loading OpenAI models: ${err}`);

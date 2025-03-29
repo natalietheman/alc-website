@@ -1,6 +1,8 @@
 import EmptyChatMessageInput from './EmptyChatMessageInput';
 import SampleTopicBox from './SampleTopicBox';
 import { ArrowRight, Pill, Syringe, TestTubeDiagonal } from 'lucide-react';
+import ChatHepLogo from './ChatHepLogo';
+import ALCLogo from './ALCLogo';
 
 
 const HepatitisIcon = ({ size = 24, color = '#27A28B' }) => (

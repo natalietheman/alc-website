@@ -48,9 +48,12 @@ const basicWebSearchResponsePrompt = `
     You must use this context to answer the user's query in the best way possible. Use an unbaised and journalistic tone in your response. Do not repeat the text.
     You must not tell the user to open any link or visit any website to get the answer. You must provide the answer in the response itself. If the user asks for links you can provide them.
     Your responses should be medium to long in length be informative and relevant to the user's query. You can use markdowns to format your response. You should use bullet points to list the information. Make sure the answer is not short and is informative.
-    You have to cite the answer using [number] notation. You must cite the sentences with their relevent context number. You must cite each and every part of the answer so the user can know where the information is coming from.
-    Place these citations at the end of that particular sentence. You can cite the same sentence multiple times if it is relevant to the user's query like [number1][number2].
-    However you do not need to cite it using the same number. You can use different numbers to cite the same sentence multiple times. The number refers to the number of the search result (passed in the context) used to generate that part of the answer.
+    
+    IMPORTANT: You have to cite the answer using [number] notation. The number refers to the number of the search result (passed in the context) used to generate that part of the answer. 
+    Place these citations at the end of that particular sentence. The numbers should start at 1 and match the exact order of the sources that will be provided to the user separately.
+    
+    Make sure to cite EVERY piece of information with a source number in brackets like [1], [2], etc.
+    If a sentence uses information from multiple sources, cite all relevant sources like [1][2].
 
     Anything inside the following \`context\` HTML block provided below is for your knowledge returned by the search engine and is not shared by the user. You have to answer question on the basis of it and cite the relevant information from it but you do not have to 
     talk about the context in your response. 
@@ -58,6 +61,9 @@ const basicWebSearchResponsePrompt = `
     <context>
     {context}
     </context>
+
+    Only use these sources to answer the question: stanford.edu, med.stanford.edu, nih.gov, who.int, cdc.gov, hepbmoms.org, joinjade.org
+    Do not use any other sources unless there is no other option.
 
     If you think there's nothing relevant in the search results, you can say that 'Hmm, sorry I could not find any relevant information on this topic. Would you like me to search again or ask something else?'.
     Anything between the \`context\` is retrieved from a search engine and is not a part of the conversation with the user. Today's date is ${new Date().toISOString()}
@@ -112,23 +118,34 @@ const createBasicWebSearchRetrieverChain = (llm: BaseChatModel) => {
         return { query: '', docs: [] };
       }
 
-      const res = await searchSearxng(input + "Sources: Asian Liver Center at Stanford, NIH, WHO, CDC, HepB Moms, JoinJade", {
-        language: 'en',
-      });
+      // Add explicit site filter directly to the query
+      const siteFilter = "(site:stanford.edu OR site:med.stanford.edu OR site:nih.gov OR site:who.int OR site:cdc.gov OR site:hepbmoms.org OR site:joinjade.org)";
+      // const siteFilter = "";
+      const enhancedQuery = `${input} ${siteFilter}`;
+      
+      try {
+        const res = await searchSearxng(enhancedQuery, {
+          language: 'en',
+          engines: ['google'],
+        });
+        
+        const documents = (res.results || []).map(
+          (result) =>
+            new Document({
+              pageContent: result.content || '',
+              metadata: {
+                title: result.title || 'Untitled',
+                url: result.url || '#',
+                ...(result.img_src && { img_src: result.img_src }),
+              },
+            }),
+        );
 
-      const documents = res.results.map(
-        (result) =>
-          new Document({
-            pageContent: result.content,
-            metadata: {
-              title: result.title,
-              url: result.url,
-              ...(result.img_src && { img_src: result.img_src }),
-            },
-          }),
-      );
-
-      return { query: input, docs: documents };
+        return { query: input, docs: documents };
+      } catch (error) {
+        console.error('Error during search');
+        return { query: input, docs: [] };
+      }
     }),
   ]);
 };

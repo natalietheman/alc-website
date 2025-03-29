@@ -24,7 +24,7 @@ export const searchSearxng = async (
   opts?: SearxngSearchOptions,
 ) => {
   const searxngURL = getSearxngApiEndpoint();
-
+  
   const url = new URL(`${searxngURL}/search?format=json`);
   url.searchParams.append('q', query);
 
@@ -38,10 +38,15 @@ export const searchSearxng = async (
     });
   }
 
-  const res = await axios.get(url.toString());
+  try {
+    const res = await axios.get(url.toString());
+    
+    const results: SearxngSearchResult[] = res.data.results || [];
+    const suggestions: string[] = res.data.suggestions || [];
 
-  const results: SearxngSearchResult[] = res.data.results;
-  const suggestions: string[] = res.data.suggestions;
-
-  return { results, suggestions };
+    return { results, suggestions };
+  } catch (error) {
+    console.error('Error in SearXNG search');
+    return { results: [], suggestions: [] };
+  }
 };
