@@ -27,10 +27,14 @@ Please install this application using Docker.
 
 4. Build and start the Docker containers:
    ```bash
+   docker-compose up --build
+   ```
+   and then to run in background
+   ```bash
    docker-compose up -d
    ```
 
-5. The application will be available at `http://localhost:3000` (or the port configured in your setup).
+6. The application will be available at `http://localhost:3000` (or the port configured in your setup).
 
 ### Running Without Docker
 
