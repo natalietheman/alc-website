@@ -6,15 +6,11 @@ services:
     ports:
       - 4000:8080
     networks:
-      - perplexica-network
+      - alc-network
     restart: unless-stopped
 
-  perplexica-backend:
-    build:
-      context: .
-      dockerfile: backend.dockerfile
-      args:
-        - SEARXNG_API_URL=http://searxng:8080
+  backend:
+    image: serena2z/alc:backend
     depends_on:
       - searxng
     ports:
@@ -24,26 +20,21 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     networks:
-      - perplexica-network
+      - alc-network
     restart: unless-stopped
 
-  perplexica-frontend:
-    build:
-      context: .
-      dockerfile: app.dockerfile
-      args:
-        - NEXT_PUBLIC_API_URL=http://127.0.0.1:3001/api
-        - NEXT_PUBLIC_WS_URL=ws://127.0.0.1:3001
+  frontend:
+    image: serena2z/alc:frontend
     depends_on:
-      - perplexica-backend
+      - backend
     ports:
       - 3000:3000
     networks:
-      - perplexica-network
+      - alc-network
     restart: unless-stopped
 
 networks:
-  perplexica-network:
+  alc-network:
 
 volumes:
   backend-dbstore:
