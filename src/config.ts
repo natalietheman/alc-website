@@ -29,7 +29,9 @@ const loadConfig = () =>
     fs.readFileSync(path.join(__dirname, `../${configFileName}`), 'utf-8'),
   ) as any as Config;
 
-export const getPort = () => loadConfig().GENERAL.PORT;
+export const getPort = () => {
+  return process.env.PORT || loadConfig().GENERAL.PORT;
+}
 
 export const getSimilarityMeasure = () =>
   loadConfig().GENERAL.SIMILARITY_MEASURE;
