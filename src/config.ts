@@ -30,9 +30,7 @@ const loadConfig = () =>
   ) as any as Config;
 
 export const getPort = () => {
-  const port = process.env.PORT || loadConfig().GENERAL.PORT;
-  console.log(`Server is running on port: ${port}`); // Debug log
-  return port;
+  return process.env.PORT || loadConfig().GENERAL.PORT;
 };
 
 export const getSimilarityMeasure = () =>
